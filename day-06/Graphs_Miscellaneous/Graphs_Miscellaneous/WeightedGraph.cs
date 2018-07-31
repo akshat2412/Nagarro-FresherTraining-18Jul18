@@ -110,13 +110,13 @@ namespace Graphs_Miscellaneous
             int src = int.Parse(Console.ReadLine());
             int[] minDist = Dijkstra(g, src);
 
-            // int minCost = MinCostUsingKruskal(g, numEdges);
-
-
+            int minCost = MinCostUsingKruskal(g, numEdges);
+            Console.WriteLine(minCost);
             foreach (int cur in minDist)
             {
                 Console.Write(cur + " ");
             }
+            Console.WriteLine();
         }
 
         class UnionSet
@@ -166,41 +166,48 @@ namespace Graphs_Miscellaneous
             }
         }
 
-        //static int MinCostUsingKruskal(WeightedGraph<int> g, int numEdges)
-        //{
-        //    int minCost = 0;
-        //    Tuple<int, int, int>[] edgeList = new Tuple<int, int, int>[numEdges];
+        static int MinCostUsingKruskal(WeightedGraph<int> g, int numEdges)
+        {
+            int minCost = 0;
+            //As it is a undirected graph, each edge will be added twice, hence size will be twice the number of edges.
+            Tuple<int, int, int>[] edgeList = new Tuple<int, int, int>[2 * numEdges];
 
-        //    Dictionary<int, List<Tuple<int, int>>>.Enumerator it = g.adjList.GetEnumerator();
-        //    int index = 0;
-        //    while (it.MoveNext())
-        //    {
-        //        //Get iterator to neighbour list of current node
-        //        List<Tuple<int, int>>.Enumerator nbrIterator = it.Current.Value.GetEnumerator();
-        //        while (nbrIterator.MoveNext()) ;
-        //        int curVtx = it.Current.Key;
-        //        int curNbr = nbrIterator.Current.Item1;
-        //        int curWt = nbrIterator.Current.Item2;
-        //        edgeList[index++] = new Tuple<int, int, int>(curVtx, curNbr, curWt);
-        //    }
+            // Get Iterartor to traverse adjList
+            Dictionary<int, List<Tuple<int, int>>>.Enumerator it = g.adjList.GetEnumerator();
+            int index = 0;
+            while (it.MoveNext())
+            {
+                //Get iterator to traverse neighbour list of current node
+                List<Tuple<int, int>>.Enumerator nbrIterator = it.Current.Value.GetEnumerator();
+                while (nbrIterator.MoveNext())
+                {
+                    int curVtx = it.Current.Key;
+                    int curNbr = nbrIterator.Current.Item1;
+                    int curWt = nbrIterator.Current.Item2;
+                    edgeList[index++] = new Tuple<int, int, int>(curVtx, curNbr, curWt);
+                }
+            }
 
-        //    Array.Sort(edgeList, delegate (Edge e1, Edge e2) { });
-        //    UnionSet edgeSet(g.numVertices);
+            Array.Sort(edgeList, delegate (Tuple<int, int, int> t1, Tuple<int, int, int> t2) {
+                if(t1.Item3 < t2.Item3) { return -1; }
+                else { return 1; }
+            });
 
-        //    for(int i = 0; i < numEdges; ++i)
-        //    {
-        //        var curEdge = edgeList[i];
-        //        int vtx1 = curEdge.Item1;
-        //        int vtx2 = curEdge.Item2;
-        //        if (edgeSet.IsSameSet(vtx1, vtx2) == false)
-        //        {
-        //            // curEdge is significant
-        //            minCost += curEdge.Item3;
-        //            edgeSet.MakeUnion(vtx1, vtx2);
-        //        }
-        //    }
-        //    return minCost;
+            UnionSet edgeSet = new UnionSet(g.numVertices);
+            for (int i = 0; i < 2 * numEdges; ++i)
+            {
+                var curEdge = edgeList[i];
+                int vtx1 = curEdge.Item1;
+                int vtx2 = curEdge.Item2;
+                if (edgeSet.IsSameSet(vtx1, vtx2) == false)
+                {
+                    // curEdge is significant
+                    minCost += curEdge.Item3;
+                    edgeSet.MakeUnion(vtx1, vtx2);
+                }
+            }
+            return minCost;
 
-        //}
+        }
     }
 }

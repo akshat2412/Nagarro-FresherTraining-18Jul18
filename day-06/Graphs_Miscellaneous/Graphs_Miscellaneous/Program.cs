@@ -12,6 +12,7 @@ namespace Graphs_Miscellaneous
         static void Main(string[] args)
         {
             //KnightMove.main();
+            
             GraphUser.main();
 
 
