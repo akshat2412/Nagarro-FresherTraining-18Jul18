@@ -14,11 +14,11 @@ namespace Graphs_Miscellaneous
         private int parent(int idx) { return idx >> 1; }
         private int left(int idx) { return (idx << 1); }
         private int right(int idx) { return (idx << 1) + 1; }
-        private void Swap(T a, T b)
+        private void Swap(int index1,int index2)
         {
-            T tmp = a;
-            a = b;
-            b = tmp;
+            T tmp = list[index1];
+            list[index1] = list[index2];
+            list[index2] = tmp;
         }
 
         public PriorityQueue()
@@ -42,7 +42,7 @@ namespace Graphs_Miscellaneous
                 T element2 = list[parent(curIdx)];
                 if (element1.CompareTo(element2) < 0)
                 {
-                    Swap(list[curIdx], list[parent(curIdx)]);
+                    Swap(curIdx, parent(curIdx));
                     //Swap(element1, element2);
                     curIdx = parent(curIdx);
                 }
@@ -57,7 +57,7 @@ namespace Graphs_Miscellaneous
         {
             if (sze == 0) return;
 
-            Swap(list[1], list[sze]);
+            Swap(1, sze);
             list.RemoveAt(sze);
             --sze;
             heapify(1);
@@ -89,7 +89,7 @@ namespace Graphs_Miscellaneous
             if (curIdx != minIdx)
             {
                 // swapping is required
-                Swap(list[curIdx], list[minIdx]);
+                Swap(curIdx, minIdx);
                 heapify(minIdx);
             }
         }
